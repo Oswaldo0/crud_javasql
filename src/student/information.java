@@ -7,18 +7,27 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import java.sql.SQLException;
+import javax.swing.ButtonGroup;
+import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSetMetaData;
+import java.sql.ResultSet;
 
 /**
  *
  * @author aoswa
  */
 public class information extends javax.swing.JFrame {
-
-    /**
-     * Creates new form information
-     */
+    //Creamos nuestra variable global
+    ButtonGroup btngr;
+    
     public information() {
         initComponents();
+        txtId.setVisible(false);
+        btngr = new ButtonGroup();
+        btngr.add(rdMasculino);
+        btngr.add(rdFemenino);
+        //Lo agregamos aquí para que se mantenga actualizado
+        mostrartabla();
     }
 
     /**
@@ -32,17 +41,17 @@ public class information extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblAlumnos = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txtMatricula = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        txtId = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtEdad = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        rbMasculino = new javax.swing.JRadioButton();
+        rdMasculino = new javax.swing.JRadioButton();
         rdFemenino = new javax.swing.JRadioButton();
         jLabel6 = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
@@ -57,18 +66,30 @@ public class information extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("ALUMNOS: ");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblAlumnos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Id", "Matricula", "Nombre", "Edad", "Sexo", "Email"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblAlumnos);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("DATOS:"));
 
@@ -80,7 +101,7 @@ public class information extends javax.swing.JFrame {
 
         jLabel5.setText("SEXO:");
 
-        rbMasculino.setText("MASCULINO");
+        rdMasculino.setText("MASCULINO");
 
         rdFemenino.setText("FEMENINO");
 
@@ -121,14 +142,14 @@ public class information extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(rbMasculino, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(rdMasculino, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(rdFemenino, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(txtNombre)
                                     .addComponent(txtEdad)
                                     .addComponent(txtEmail))))
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addComponent(btnGuardar)
@@ -147,7 +168,7 @@ public class information extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -159,7 +180,7 @@ public class information extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(rbMasculino)
+                    .addComponent(rdMasculino)
                     .addComponent(rdFemenino))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -215,7 +236,7 @@ public class information extends javax.swing.JFrame {
         String sexo="";
         
         //Validamos que radioButton está seleccionado
-        if(rbMasculino.isSelected()){
+        if(rdMasculino.isSelected()){
             sexo= "M";
         }else if(rdFemenino.isSelected()){
             sexo="F";
@@ -235,14 +256,54 @@ public class information extends javax.swing.JFrame {
             //Hacemos la insersion 
             ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Guardados exitosamente");
+            limpiar();
+            mostrartabla();
+            
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(null, ex.toString());
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    //Creamos un metodo para poder limpiar el formulario cada vez que se guarde un registro
+    private void limpiar(){
+        txtId.setText("");
+        txtMatricula.setText("");
+        txtNombre.setText("");
+        txtEdad.setText("");
+        txtEmail.setText("");
+        btngr.clearSelection();
+    }
+    
+    //Metodo para mostrar los datos en la tabla
+    private void mostrartabla(){
+        DefaultTableModel mTable = (DefaultTableModel) tblAlumnos.getModel();
+        mTable.setRowCount(0);
+        
+       PreparedStatement ps;
+       ResultSet rs;
+       ResultSetMetaData rsmt;
+       int columnas;
+       
+       try{
+           Connection con = conexion.getconection();
+           ps= con.prepareStatement("SELECT ID,matricula,nombre,edad,sexo,email FROM Alumnos");
+           rs = ps.executeQuery();
+           rsmt = rs.getMetaData();
+           columnas = rsmt.getColumnCount();
+           
+           while(rs.next()){
+               Object[] fila = new Object[columnas];
+               
+               for(int i=0; i<columnas; i++){
+                   fila[i] = rs.getObject(i+1);
+               }
+               mTable.addRow(fila);
+           }
+       }catch(SQLException ex){
+           JOptionPane.showMessageDialog(null, ex.toString());
+       }
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -288,12 +349,12 @@ public class information extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JRadioButton rbMasculino;
     private javax.swing.JRadioButton rdFemenino;
+    private javax.swing.JRadioButton rdMasculino;
+    private javax.swing.JTable tblAlumnos;
     private javax.swing.JTextField txtEdad;
     private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtMatricula;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
