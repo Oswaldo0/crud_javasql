@@ -89,6 +89,11 @@ public class information extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tblAlumnos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblAlumnosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblAlumnos);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("DATOS:"));
@@ -159,7 +164,7 @@ public class information extends javax.swing.JFrame {
                         .addComponent(btnEliminar)
                         .addGap(18, 18, 18)
                         .addComponent(btnLimpiar)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,8 +212,8 @@ public class information extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -263,6 +268,39 @@ public class information extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, ex.toString());
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void tblAlumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblAlumnosMouseClicked
+        //Vamos a hacer que solo haciendo click en cualquier fila de la tabla nos traiga a los textFile los datos para poder modificarlos o eliminarlos
+        try{
+            //Para saber que fila se está seleccionando
+            int fila = tblAlumnos.getSelectedRow();
+            int id= Integer.parseInt(tblAlumnos.getValueAt(fila, 0).toString());
+            PreparedStatement ps;
+            ResultSet rs;
+            
+            Connection con = conexion.getconection();
+            ps= con.prepareStatement("SELECT matricula,nombre,edad,sexo,email FROM Alumnos WHERE ID=?");
+            ps.setInt(1, id);
+            rs= ps.executeQuery();
+            
+            while(rs.next()){
+                txtId.setText(String.valueOf(id));
+                txtMatricula.setText(rs.getString("matricula"));
+                txtNombre.setText(rs.getString("nombre"));
+                txtEdad.setText(rs.getString("edad"));
+                txtEmail.setText(rs.getString("email"));
+                if(rs.getString("sexo").equals("M")){
+                    rdMasculino.setSelected(true);
+                }else if(rs.getString("sexo").equals("F")){
+                    rdFemenino.setSelected(true);
+                }
+            }
+            
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, ex.toString());
+        }
+    }//GEN-LAST:event_tblAlumnosMouseClicked
 
     //Creamos un metodo para poder limpiar el formulario cada vez que se guarde un registro
     private void limpiar(){
