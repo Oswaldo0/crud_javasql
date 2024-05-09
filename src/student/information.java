@@ -122,6 +122,11 @@ public class information extends javax.swing.JFrame {
         btnEliminar.setText("ELIMINAR");
 
         btnModificar.setText("MODIFICAR");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnLimpiar.setText("LIMPIAR");
 
@@ -301,6 +306,45 @@ public class information extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, ex.toString());
         }
     }//GEN-LAST:event_tblAlumnosMouseClicked
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // TODO add your handling code here:
+         //Capturamos los datos de todos los textFiles
+        int id = Integer.parseInt(txtId.getText());
+        String matricula = txtMatricula.getText();
+        String nombre = txtNombre.getText();
+        int edad = Integer.parseInt(txtEdad.getText());
+        String email = txtEmail.getText();
+        String sexo="";
+        
+        //Validamos que radioButton está seleccionado
+        if(rdMasculino.isSelected()){
+            sexo= "M";
+        }else if(rdFemenino.isSelected()){
+            sexo="F";
+        }
+        
+        try{
+            Connection con = conexion.getconection(); 
+            PreparedStatement ps= con.prepareStatement("UPDATE Alumnos SET matricula=?,nombre=?,edad=?,sexo=?,email=? WHERE ID=?");
+            
+            ps.setString(1, matricula);
+            ps.setString(2, nombre);
+            ps.setInt(3, edad);
+            ps.setString(4, sexo);
+            ps.setString(5, email);
+            ps.setInt(6, id);
+            
+            //Hacemos la insersion 
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Modificado exitosamente");
+            limpiar();
+            mostrartabla();
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, ex.toString());
+        }
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     //Creamos un metodo para poder limpiar el formulario cada vez que se guarde un registro
     private void limpiar(){
