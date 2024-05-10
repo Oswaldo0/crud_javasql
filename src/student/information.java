@@ -120,6 +120,11 @@ public class information extends javax.swing.JFrame {
         });
 
         btnEliminar.setText("ELIMINAR");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnModificar.setText("MODIFICAR");
         btnModificar.addActionListener(new java.awt.event.ActionListener() {
@@ -129,6 +134,11 @@ public class information extends javax.swing.JFrame {
         });
 
         btnLimpiar.setText("LIMPIAR");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -308,8 +318,8 @@ public class information extends javax.swing.JFrame {
     }//GEN-LAST:event_tblAlumnosMouseClicked
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        // TODO add your handling code here:
-         //Capturamos los datos de todos los textFiles
+        // Logica para modificar los registros
+        
         int id = Integer.parseInt(txtId.getText());
         String matricula = txtMatricula.getText();
         String nombre = txtNombre.getText();
@@ -345,6 +355,32 @@ public class information extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, ex.toString());
         }
     }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // Logica para eliminar registros
+        int id = Integer.parseInt(txtId.getText());
+        
+        try{
+            Connection con = conexion.getconection(); 
+            PreparedStatement ps= con.prepareStatement("DELETE FROM Alumnos WHERE ID=?");
+            
+            ps.setInt(1, id);
+            
+            //Hacemos la insersion 
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Eliminado exitosamente");
+            limpiar();
+            mostrartabla();
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, ex.toString());
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        // L´goca para limpiar el formulario 
+        limpiar();
+    }//GEN-LAST:event_btnLimpiarActionPerformed
 
     //Creamos un metodo para poder limpiar el formulario cada vez que se guarde un registro
     private void limpiar(){
